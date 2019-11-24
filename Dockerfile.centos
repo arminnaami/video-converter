@@ -12,7 +12,13 @@ RUN yum install -y php wget java-1.8.0-openjdk \
 	&& yum clean all
 
 # Install all language packs to tesseract
-RUN yum search tesseract-langpack | awk '{print $1}'|grep tesseract|  sed 's/\..*//g'| xargs yum install -y && yum clean all
+ARG TESSERACT_GREP_FILTER=""
+RUN yum search tesseract-langpack \
+	| awk '{print $1}' \
+	| grep tesseract \
+	| sed 's/\..*//g' \
+	| grep ${TESSERACT_GREP_FILTER} \
+	| xargs yum install -y && yum clean all
 
 # Install VobSub2SRT
 RUN DIR=$(mktemp -d) && cd ${DIR} && \
